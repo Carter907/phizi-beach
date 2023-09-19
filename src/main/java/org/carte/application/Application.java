@@ -1,5 +1,7 @@
 package org.carte.application;
 
+import org.carte.application.handlers.KeyHandler;
+import org.carte.application.handlers.MouseHandler;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -9,29 +11,30 @@ import java.nio.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 public abstract class Application {
 
         private long window;
+        protected KeyHandler keyHandler;
+        protected MouseHandler mouseHandler;
 
         public void run() {
             System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
             start();
             loop();
-
+            clean();
             glfwFreeCallbacks(window);
             glfwDestroyWindow(window);
 
             glfwTerminate();
             glfwSetErrorCallback(null).free();
         }
-        abstract void init();
-        abstract void resize();
-        abstract void clean();
-        abstract void update();
+        protected abstract void init();
+        protected abstract void resize();
+        protected abstract void clean();
+        protected abstract void update();
 
 
         private void start() {
@@ -44,13 +47,16 @@ public abstract class Application {
             glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
             glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-            window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
+            window = glfwCreateWindow(500, 400, "phizi engine", NULL, NULL);
             if ( window == NULL )
                 throw new RuntimeException("Failed to create the GLFW window");
 
             glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
                 if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
                     glfwSetWindowShouldClose(window, true);
+            });
+            glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
+
             });
 
             try ( MemoryStack stack = stackPush() ) {
@@ -77,17 +83,16 @@ public abstract class Application {
         private void loop() {
 
             GL.createCapabilities();
-
-            glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+            init();
 
 
             while ( !glfwWindowShouldClose(window) ) {
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                update();
 
                 glfwSwapBuffers(window);
 
-
                 glfwPollEvents();
+
             }
         }
 
