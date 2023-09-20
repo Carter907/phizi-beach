@@ -1,6 +1,8 @@
 package org.carte.application;
 
 import org.carte.model.Application;
+import org.carte.model.gl.Attribute;
+import org.carte.model.gl.GLType;
 import org.carte.model.gl.utils.ProgramUtils;
 import org.carte.model.gl.utils.ShaderUtils;
 import org.lwjgl.opengl.GL33;
@@ -13,8 +15,6 @@ public class PhiziApplication extends Application {
 
     @Override
     protected void init() {
-        glPointSize(10);
-        glEnable(GL_POINT_SMOOTH);
 
         program = ProgramUtils.getProgram(
                 ShaderUtils.getShaderCode("/shaders/vert.glsl"),
@@ -22,7 +22,14 @@ public class PhiziApplication extends Application {
         );
         int vao = glGenVertexArrays();
         glBindVertexArray(vao);
+        float[] vertices = {
 
+                -0.5f, -0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f,
+                0f, .5f, 0.0f,
+        };
+        var attrib = new Attribute(GLType.VEC3, vertices);
+        attrib.locateVariable(program, "pos");
     }
 
     @Override
@@ -42,7 +49,7 @@ public class PhiziApplication extends Application {
         glClear(GL33.GL_COLOR_BUFFER_BIT | GL33.GL_DEPTH_BUFFER_BIT);
         glUseProgram(program);
 
-        glDrawArrays(GL_POINTS, 0, 1);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
     }
 }
