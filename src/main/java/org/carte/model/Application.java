@@ -1,7 +1,7 @@
-package org.carte.application;
+package org.carte.model;
 
-import org.carte.application.handlers.KeyHandler;
-import org.carte.application.handlers.MouseHandler;
+import org.carte.model.handlers.KeyHandler;
+import org.carte.model.handlers.MouseHandler;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -16,6 +16,8 @@ import static org.lwjgl.system.MemoryUtil.*;
 public abstract class Application {
 
         private long window;
+        protected double time; // delta time
+        private double inital;
         protected KeyHandler keyHandler;
         protected MouseHandler mouseHandler;
 
@@ -32,7 +34,7 @@ public abstract class Application {
             glfwSetErrorCallback(null).free();
         }
         protected abstract void init();
-        protected abstract void resize();
+        protected abstract void resize(int width, int height);
         protected abstract void clean();
         protected abstract void update();
 
@@ -52,11 +54,14 @@ public abstract class Application {
                 throw new RuntimeException("Failed to create the GLFW window");
 
             glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-                if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                    glfwSetWindowShouldClose(window, true);
+
+
+            });
+            glfwSetMouseButtonCallback(window, (window, button, action, modifiers) -> {
+
             });
             glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
-
+                resize(width, height);
             });
 
             try ( MemoryStack stack = stackPush() ) {
@@ -84,14 +89,17 @@ public abstract class Application {
 
             GL.createCapabilities();
             init();
-
-
+            inital = glfwGetTime() * 1000;
             while ( !glfwWindowShouldClose(window) ) {
+
                 update();
 
                 glfwSwapBuffers(window);
 
                 glfwPollEvents();
+                time = System.currentTimeMillis() - inital;
+                inital = System.currentTimeMillis();
+                System.out.println(time);
 
             }
         }
