@@ -38,4 +38,10 @@ public class PhiziEngine {
 
         return vertices;
     }
+
+    public void update() {
+        particles.forEach(particle -> {
+            particle.getContext().
+        });
+    }
 }

@@ -62,7 +62,7 @@ public class PhiziApplication extends Application {
         System.out.println(Arrays.toString(engine.getVertices()));
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
             engine.addRandomParticle();
-
+        engine.update();
 
         glDrawArrays(GL_POINTS, 0, engine.getVertices().length/3);
 

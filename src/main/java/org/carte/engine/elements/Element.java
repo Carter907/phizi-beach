@@ -1,11 +1,11 @@
 package org.carte.engine.elements;
 
 public enum Element {
-    SAND(1602),
-    WATER(997);
-    public final int density;
+    SAND(0.00000440f),
+    WATER(0.00005f);
+    public final float mass;
 
-    Element(int density) {
-        this.density = density;
+    Element(float mass) {
+        this.mass = mass;
     }
 }
