@@ -15,9 +15,14 @@ import static org.lwjgl.system.MemoryUtil.*;
 public abstract class Application {
 
     protected long window;
-    protected double time; // delta time
+    protected double delta, totalDelta; // delta time
     private double inital;
+    protected int windowHeight, windowWidth;
 
+    public Application() {
+        windowWidth = 500;
+        windowHeight = 400;
+    }
 
     public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
@@ -51,11 +56,13 @@ public abstract class Application {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-        window = glfwCreateWindow(500, 400, "phizi engine", NULL, NULL);
+        window = glfwCreateWindow(windowWidth, windowHeight, "phizi engine", NULL, NULL);
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
         glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
+            this.windowWidth = width;
+            this.windowHeight = height;
             resize(width, height);
         });
 
@@ -92,9 +99,9 @@ public abstract class Application {
             update();
 
             glfwSwapBuffers(window);
-            time = System.currentTimeMillis() - inital;
+            delta = System.currentTimeMillis() - inital;
             inital = System.currentTimeMillis();
-
+            totalDelta+=delta;
         }
     }
 

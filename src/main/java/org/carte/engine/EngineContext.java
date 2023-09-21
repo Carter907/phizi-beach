@@ -1,33 +1,65 @@
 package org.carte.engine;
 
-import org.carte.engine.physics.Direction;
-import org.carte.engine.physics.Force;
-import org.carte.engine.physics.Velocity;
-
+import java.util.Collections;
 import java.util.Map;
 
 public class EngineContext {
-    private Velocity velocity;
-    private Force netForce;
+    private float velocityX, velocityY;
+    private float forceX, forceY;
+    private float mass;
 
-    public EngineContext(Velocity velocity, Force netForce) {
-        this.velocity = velocity;
-        this.netForce = netForce;
+    public EngineContext(float velocityX, float velocityY, float forceX, float forceY, float mass) {
+        this.velocityX = velocityX;
+        this.velocityY = velocityY;
+        this.forceX = forceX;
+        this.forceY = forceY;
+        this.mass = mass;
     }
 
-    public Velocity getVelocity() {
-        return velocity;
+    public float getMass() {
+        return mass;
     }
 
-    public void setVelocity(Velocity velocity) {
-        this.velocity = velocity;
+    public void setMass(float mass) {
+        this.mass = mass;
     }
 
-    public Force getNetForce() {
-        return netForce;
+    public float getVelocityX() {
+        return velocityX;
     }
 
-    public void setNetForce(Force netForce) {
-        this.netForce = netForce;
+    public void setVelocityX(float velocityX) {
+        this.velocityX = velocityX;
+    }
+
+    public float getVelocityY() {
+        return velocityY;
+    }
+
+    public void setVelocityY(float velocityY) {
+        this.velocityY = velocityY;
+    }
+
+    public float getForceX() {
+        return forceX;
+    }
+
+    public void setForceX(float forceX) {
+        this.forceX = forceX;
+    }
+
+    public float getForceY() {
+        return forceY;
+    }
+
+    public void setForceY(float forceY) {
+        this.forceY = forceY;
+    }
+
+    public float getAccelerationX() {
+       return forceX / mass;
+    }
+    public float getAccelerationY() {
+        return forceY / mass;
     }
 }

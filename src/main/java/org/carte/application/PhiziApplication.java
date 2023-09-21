@@ -18,7 +18,6 @@ public class PhiziApplication extends Application {
 
     private int program;
     private Attribute pos;
-    private Uniform<Float> add_x;
     private PhiziEngine engine;
 
     public PhiziApplication() {
@@ -27,6 +26,18 @@ public class PhiziApplication extends Application {
 
     @Override
     protected void init() {
+
+        glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
+            double[] x = new double[1], y = new double[1];
+            glfwGetCursorPos(window,x,y);
+           if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS)
+               engine.addAtPoint((float)x[0]/windowWidth*2-1, -((float)y[0]/windowHeight*2-1));
+        });
+        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+           if (key == GLFW_KEY_F && action == GLFW_PRESS)
+               engine.addRandomParticle();
+        });
+
         glPointSize(5f);
         program = ProgramUtils.getProgram(
                 ShaderUtils.getShaderCode("/shaders/vert.glsl"),
@@ -60,9 +71,8 @@ public class PhiziApplication extends Application {
         glBindBuffer(GL_ARRAY_BUFFER, pos.bufferRef);
         glBufferSubData(GL_ARRAY_BUFFER, 0, engine.getVertices());
         System.out.println(Arrays.toString(engine.getVertices()));
-        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
-            engine.addRandomParticle();
-        engine.update();
+
+        engine.update((float)totalDelta);
 
         glDrawArrays(GL_POINTS, 0, engine.getVertices().length/3);
 
