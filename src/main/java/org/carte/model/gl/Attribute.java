@@ -5,20 +5,23 @@ import static org.lwjgl.opengl.GL33.*;
 public class Attribute {
 
     private GLType dataType;
-    public float[] data;
-    private int bufferRef;
+    private float[] data;
+    public int bufferRef;
 
-    public Attribute(GLType dataType, float[] data) {
+    public Attribute(GLType dataType, float[] data, boolean isDynamic) {
         this.dataType = dataType;
-        this.data = data;
+        this.setData(data);
         bufferRef = glGenBuffers();
-        setBuffers();
+        setBuffers(isDynamic);
     }
 
-    private void setBuffers() {
+    private void setBuffers(boolean isDynamic) {
         glBindBuffer(GL_ARRAY_BUFFER, bufferRef);
-        glBufferData(GL_ARRAY_BUFFER, data,
-                GL_STATIC_DRAW);
+        if (isDynamic) {
+
+            glBufferData(GL_ARRAY_BUFFER, getData(), GL_DYNAMIC_DRAW);
+        } else
+            glBufferData(GL_ARRAY_BUFFER, getData(), GL_STATIC_DRAW);
     }
 
     public void locateVariable(int programRef,
@@ -26,7 +29,7 @@ public class Attribute {
         int variableRef = glGetAttribLocation(programRef,
                 variableName);
         if (variableRef == -1)
-            return;
+            throw new RuntimeException("could not locate attribute variable \"" + variableName + "\"");
         glBindBuffer(GL_ARRAY_BUFFER, bufferRef);
         switch (dataType) {
             case FLOAT -> glVertexAttribPointer(variableRef, 1, GL_FLOAT,
@@ -42,5 +45,13 @@ public class Attribute {
         }
 
         glEnableVertexAttribArray(variableRef);
+    }
+
+    public float[] getData() {
+        return data;
+    }
+
+    public void setData(float[] data) {
+        this.data = data;
     }
 }

@@ -1,7 +1,5 @@
 package org.carte.model;
 
-import org.carte.model.handlers.KeyHandler;
-import org.carte.model.handlers.MouseHandler;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -13,96 +11,92 @@ import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
+
 public abstract class Application {
 
-        private long window;
-        protected double time; // delta time
-        private double inital;
-        protected KeyHandler keyHandler;
-        protected MouseHandler mouseHandler;
-
-        public void run() {
-            System.out.println("Hello LWJGL " + Version.getVersion() + "!");
-
-            start();
-            loop();
-            clean();
-            glfwFreeCallbacks(window);
-            glfwDestroyWindow(window);
-
-            glfwTerminate();
-            glfwSetErrorCallback(null).free();
-        }
-        protected abstract void init();
-        protected abstract void resize(int width, int height);
-        protected abstract void clean();
-        protected abstract void update();
+    protected long window;
+    protected double time; // delta time
+    private double inital;
 
 
-        private void start() {
-            GLFWErrorCallback.createPrint(System.err).set();
+    public void run() {
+        System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
-            if ( !glfwInit() )
-                throw new IllegalStateException("Unable to initialize GLFW");
+        start();
+        loop();
+        clean();
+        glfwFreeCallbacks(window);
+        glfwDestroyWindow(window);
 
-            glfwDefaultWindowHints();
-            glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
+    }
 
-            window = glfwCreateWindow(500, 400, "phizi engine", NULL, NULL);
-            if ( window == NULL )
-                throw new RuntimeException("Failed to create the GLFW window");
+    protected abstract void init();
 
-            glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+    protected abstract void resize(int width, int height);
+
+    protected abstract void clean();
+
+    protected abstract void update();
 
 
-            });
-            glfwSetMouseButtonCallback(window, (window, button, action, modifiers) -> {
+    private void start() {
+        GLFWErrorCallback.createPrint(System.err).set();
 
-            });
-            glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
-                resize(width, height);
-            });
+        if (!glfwInit())
+            throw new IllegalStateException("Unable to initialize GLFW");
 
-            try ( MemoryStack stack = stackPush() ) {
-                IntBuffer pWidth = stack.mallocInt(1); // int*
-                IntBuffer pHeight = stack.mallocInt(1); // int*
+        glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-                glfwGetWindowSize(window, pWidth, pHeight);
+        window = glfwCreateWindow(500, 400, "phizi engine", NULL, NULL);
+        if (window == NULL)
+            throw new RuntimeException("Failed to create the GLFW window");
 
-                GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
+            resize(width, height);
+        });
 
-                glfwSetWindowPos(
-                        window,
-                        (vidmode.width() - pWidth.get(0)) / 2,
-                        (vidmode.height() - pHeight.get(0)) / 2
-                );
-            }
+        try (MemoryStack stack = stackPush()) {
+            IntBuffer pWidth = stack.mallocInt(1); // int*
+            IntBuffer pHeight = stack.mallocInt(1); // int*
 
-            glfwMakeContextCurrent(window);
-            glfwSwapInterval(1);
+            glfwGetWindowSize(window, pWidth, pHeight);
 
-            glfwShowWindow(window);
+            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+            glfwSetWindowPos(
+                    window,
+                    (vidmode.width() - pWidth.get(0)) / 2,
+                    (vidmode.height() - pHeight.get(0)) / 2
+            );
         }
 
-        private void loop() {
+        glfwMakeContextCurrent(window);
+        glfwSwapInterval(1);
 
-            GL.createCapabilities();
-            init();
-            inital = glfwGetTime() * 1000;
-            while ( !glfwWindowShouldClose(window) ) {
+        glfwShowWindow(window);
+    }
 
-                update();
+    private void loop() {
 
-                glfwSwapBuffers(window);
+        GL.createCapabilities();
+        init();
+        inital = glfwGetTime() * 1000;
+        while (!glfwWindowShouldClose(window)) {
 
-                glfwPollEvents();
-                time = System.currentTimeMillis() - inital;
-                inital = System.currentTimeMillis();
-                System.out.println(time);
+            glfwPollEvents();
 
-            }
+            update();
+
+            glfwSwapBuffers(window);
+            time = System.currentTimeMillis() - inital;
+            inital = System.currentTimeMillis();
+
         }
+    }
 
 
 }
