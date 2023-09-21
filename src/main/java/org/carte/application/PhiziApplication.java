@@ -9,6 +9,8 @@ import org.carte.model.gl.utils.ProgramUtils;
 import org.carte.model.gl.utils.ShaderUtils;
 import org.lwjgl.opengl.GL33;
 
+import java.util.Arrays;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33.*;
 
@@ -18,6 +20,10 @@ public class PhiziApplication extends Application {
     private Attribute pos;
     private Uniform<Float> add_x;
     private PhiziEngine engine;
+
+    public PhiziApplication() {
+        this.engine = new PhiziEngine();
+    }
 
     @Override
     protected void init() {
@@ -33,8 +39,6 @@ public class PhiziApplication extends Application {
         pos = new Attribute(GLType.VEC3, vertices, true);
         pos.locateVariable(program, "pos");
 
-        add_x = new Uniform<>(GLType.FLOAT, 0f);
-        add_x.locateVariable(program, "add_x");
     }
 
     @Override
@@ -54,10 +58,13 @@ public class PhiziApplication extends Application {
         glClear(GL33.GL_COLOR_BUFFER_BIT | GL33.GL_DEPTH_BUFFER_BIT);
         glUseProgram(program);
         glBindBuffer(GL_ARRAY_BUFFER, pos.bufferRef);
-        glBufferSubData(GL_ARRAY_BUFFER, 0,engine.getVertices());
+        glBufferSubData(GL_ARRAY_BUFFER, 0, engine.getVertices());
+        System.out.println(Arrays.toString(engine.getVertices()));
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+            engine.addRandomParticle();
 
 
-        glDrawArrays(GL_POINTS, 0, 3);
+        glDrawArrays(GL_POINTS, 0, engine.getVertices().length/3);
 
     }
 }
