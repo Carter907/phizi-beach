@@ -24,7 +24,7 @@ public class PhiziEngine {
                         (float) Math.random() * 2 - 1,
                         (float) Math.random() * 2 - 1,
                         Element.SAND,
-                        new EngineContext(0,0,0, -9.81f*Element.SAND.mass, Element.SAND.mass)
+                        new EngineContext(0,0,0, (float)(-9.81f*Element.SAND.mass), Element.SAND.mass)
                 ));
     }
     public void addAtPoint(float x, float y) {
@@ -33,7 +33,7 @@ public class PhiziEngine {
                         x,
                         y,
                         Element.SAND,
-                        new EngineContext(0,0,0, -9.81f * Element.SAND.mass, Element.SAND.mass)
+                        new EngineContext(0,0,0, (float)(-9.81f * Element.SAND.mass), Element.SAND.mass)
                 )
         );
     }
@@ -53,10 +53,10 @@ public class PhiziEngine {
     public void update(float time) {
         particles.stream().forEach(particle -> {
             EngineContext context = particle.getContext();
-            context.setVelocityX(context.getAccelerationX() * time);
-            context.setVelocityY(context.getAccelerationY() * time);
-            particle.setX(context.getVelocityX() * time);
-            particle.setY(context.getVelocityY() * time);
+            context.setVelocityX(context.getVelocityX() + context.getAccelerationX() * time);
+            context.setVelocityY(context.getVelocityY() + context.getAccelerationY() * time);
+            particle.setX((float)(particle.getX() + context.getVelocityX() * time));
+            particle.setY((float)(particle.getY() + context.getVelocityY() * time));
 
         });
 

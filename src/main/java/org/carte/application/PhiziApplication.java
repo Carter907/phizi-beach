@@ -28,24 +28,24 @@ public class PhiziApplication extends Application {
     protected void init() {
 
         glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
-            double[] x = new double[1], y = new double[1];
-            glfwGetCursorPos(window,x,y);
-           if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS)
-               engine.addAtPoint((float)x[0]/windowWidth*2-1, -((float)y[0]/windowHeight*2-1));
+//            double[] x = new double[1], y = new double[1];
+//            glfwGetCursorPos(window,x,y);
+//           if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS)
+//               engine.addAtPoint((float)x[0]/windowWidth*2-1, -((float)y[0]/windowHeight*2-1));
         });
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-           if (key == GLFW_KEY_F && action == GLFW_PRESS)
-               engine.addRandomParticle();
+            if (key == GLFW_KEY_F && action == GLFW_PRESS)
+                engine.addRandomParticle();
         });
 
-        glPointSize(5f);
+        glPointSize(1f);
         program = ProgramUtils.getProgram(
                 ShaderUtils.getShaderCode("/shaders/vert.glsl"),
                 ShaderUtils.getShaderCode("/shaders/frag.glsl")
         );
         int vao = glGenVertexArrays();
         glBindVertexArray(vao);
-        final int MAX_VERTS = 1000;
+        final int MAX_VERTS = 100000;
         float[] vertices = new float[MAX_VERTS * 3];
         pos = new Attribute(GLType.VEC3, vertices, true);
         pos.locateVariable(program, "pos");
@@ -72,9 +72,16 @@ public class PhiziApplication extends Application {
         glBufferSubData(GL_ARRAY_BUFFER, 0, engine.getVertices());
         System.out.println(Arrays.toString(engine.getVertices()));
 
-        engine.update((float)totalDelta);
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
+            double[] x = new double[1], y = new double[1];
+            glfwGetCursorPos(window, x, y);
 
-        glDrawArrays(GL_POINTS, 0, engine.getVertices().length/3);
+            engine.addAtPoint((float) x[0] / windowWidth * 2 - 1, -((float) y[0] / windowHeight * 2 - 1));
+        }
+
+        engine.update((float) delta / 10000);
+
+        glDrawArrays(GL_POINTS, 0, engine.getVertices().length / 3);
 
     }
 }

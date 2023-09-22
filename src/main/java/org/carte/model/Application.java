@@ -91,7 +91,7 @@ public abstract class Application {
 
         GL.createCapabilities();
         init();
-        inital = glfwGetTime() * 1000;
+        inital = System.currentTimeMillis();
         while (!glfwWindowShouldClose(window)) {
 
             glfwPollEvents();

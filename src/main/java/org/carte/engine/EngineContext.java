@@ -4,11 +4,11 @@ import java.util.Collections;
 import java.util.Map;
 
 public class EngineContext {
-    private float velocityX, velocityY;
-    private float forceX, forceY;
-    private float mass;
+    private double velocityX, velocityY;
+    private double forceX, forceY;
+    private double mass;
 
-    public EngineContext(float velocityX, float velocityY, float forceX, float forceY, float mass) {
+    public EngineContext(double velocityX, double velocityY, double forceX, double forceY, double mass) {
         this.velocityX = velocityX;
         this.velocityY = velocityY;
         this.forceX = forceX;
@@ -16,50 +16,50 @@ public class EngineContext {
         this.mass = mass;
     }
 
-    public float getMass() {
-        return mass;
-    }
-
-    public void setMass(float mass) {
-        this.mass = mass;
-    }
-
-    public float getVelocityX() {
+    public double getVelocityX() {
         return velocityX;
     }
 
-    public void setVelocityX(float velocityX) {
+    public void setVelocityX(double velocityX) {
         this.velocityX = velocityX;
     }
 
-    public float getVelocityY() {
+    public double getVelocityY() {
         return velocityY;
     }
 
-    public void setVelocityY(float velocityY) {
+    public void setVelocityY(double velocityY) {
         this.velocityY = velocityY;
     }
 
-    public float getForceX() {
+    public double getForceX() {
         return forceX;
     }
 
-    public void setForceX(float forceX) {
+    public void setForceX(double forceX) {
         this.forceX = forceX;
     }
 
-    public float getForceY() {
+    public double getForceY() {
         return forceY;
     }
 
-    public void setForceY(float forceY) {
+    public void setForceY(double forceY) {
         this.forceY = forceY;
     }
 
-    public float getAccelerationX() {
+    public double getMass() {
+        return mass;
+    }
+
+    public void setMass(double mass) {
+        this.mass = mass;
+    }
+
+    public double getAccelerationX() {
        return forceX / mass;
     }
-    public float getAccelerationY() {
+    public double getAccelerationY() {
         return forceY / mass;
     }
 }
