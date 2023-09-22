@@ -7,15 +7,17 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class PhiziEngine {
 
     private LinkedList<Particle> particles;
+    public final int MAX_PARTICLES;
 
-    public PhiziEngine() {
+    public PhiziEngine(final int MAX_PARTICLES) {
         this.particles = new LinkedList<>();
-
+        this.MAX_PARTICLES = MAX_PARTICLES;
     }
 
     public void addRandomParticle() {
@@ -50,15 +52,11 @@ public class PhiziEngine {
         return vertices;
     }
 
-    public void update(float time) {
-        particles.stream().forEach(particle -> {
-            EngineContext context = particle.getContext();
-            context.setVelocityX(context.getVelocityX() + context.getAccelerationX() * time);
-            context.setVelocityY(context.getVelocityY() + context.getAccelerationY() * time);
-            particle.setX((float)(particle.getX() + context.getVelocityX() * time));
-            particle.setY((float)(particle.getY() + context.getVelocityY() * time));
+    public void update(Consumer<Particle> eachParticle) {
+        if (particles.size() > MAX_PARTICLES)
+            particles.poll();
 
-        });
+        particles.forEach(eachParticle);
 
     }
 }

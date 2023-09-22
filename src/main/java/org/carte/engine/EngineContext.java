@@ -62,4 +62,5 @@ public class EngineContext {
     public double getAccelerationY() {
         return forceY / mass;
     }
+
 }

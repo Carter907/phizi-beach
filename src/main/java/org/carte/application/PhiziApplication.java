@@ -1,5 +1,6 @@
 package org.carte.application;
 
+import org.carte.engine.EngineContext;
 import org.carte.engine.PhiziEngine;
 import org.carte.model.Application;
 import org.carte.model.gl.Attribute;
@@ -20,8 +21,10 @@ public class PhiziApplication extends Application {
     private Attribute pos;
     private PhiziEngine engine;
 
+    final int MAX_VERTS = 10000;
+
     public PhiziApplication() {
-        this.engine = new PhiziEngine();
+        this.engine = new PhiziEngine(MAX_VERTS);
     }
 
     @Override
@@ -39,13 +42,13 @@ public class PhiziApplication extends Application {
         });
 
         glPointSize(1f);
+        glEnable(GL_POINT_SMOOTH);
         program = ProgramUtils.getProgram(
                 ShaderUtils.getShaderCode("/shaders/vert.glsl"),
                 ShaderUtils.getShaderCode("/shaders/frag.glsl")
         );
         int vao = glGenVertexArrays();
         glBindVertexArray(vao);
-        final int MAX_VERTS = 100000;
         float[] vertices = new float[MAX_VERTS * 3];
         pos = new Attribute(GLType.VEC3, vertices, true);
         pos.locateVariable(program, "pos");
@@ -68,9 +71,6 @@ public class PhiziApplication extends Application {
         glClearColor(0, 0, 0, 0);
         glClear(GL33.GL_COLOR_BUFFER_BIT | GL33.GL_DEPTH_BUFFER_BIT);
         glUseProgram(program);
-        glBindBuffer(GL_ARRAY_BUFFER, pos.bufferRef);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, engine.getVertices());
-        System.out.println(Arrays.toString(engine.getVertices()));
 
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
             double[] x = new double[1], y = new double[1];
@@ -78,8 +78,27 @@ public class PhiziApplication extends Application {
 
             engine.addAtPoint((float) x[0] / windowWidth * 2 - 1, -((float) y[0] / windowHeight * 2 - 1));
         }
+        System.out.println(engine.getVertices().length);
 
-        engine.update((float) delta / 10000);
+        engine.update(particle -> {
+            float time = (float)delta/1000;
+            EngineContext context = particle.getContext();
+            context.setVelocityX(context.getVelocityX() + context.getAccelerationX() * time);
+            context.setVelocityY(context.getVelocityY() + context.getAccelerationY() * time);
+            particle.setX((float) (particle.getX() + context.getVelocityX() * time));
+            float distanceY = (float)context.getVelocityY() * time;
+            if (particle.getY() + distanceY >= -1) {
+                particle.setY(particle.getY() + distanceY);
+            }
+            else
+                particle.setY(-1);
+
+
+        });
+
+
+        glBindBuffer(GL_ARRAY_BUFFER, pos.bufferRef);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, engine.getVertices());
 
         glDrawArrays(GL_POINTS, 0, engine.getVertices().length / 3);
 
