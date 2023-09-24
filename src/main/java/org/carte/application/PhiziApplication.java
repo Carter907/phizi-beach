@@ -33,12 +33,7 @@ public class PhiziApplication extends Application {
     @Override
     protected void init() {
 
-//        glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
-//            double[] x = new double[1], y = new double[1];
-//            glfwGetCursorPos(window,x,y);
-//           if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS)
-//               engine.addAtPoint((float)x[0]/windowWidth*2-1, -((float)y[0]/windowHeight*2-1));
-//        });
+
 //        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 //            if (key == GLFW_KEY_F && action == GLFW_PRESS)
 //                engine.addRandomParticle();
@@ -57,10 +52,19 @@ public class PhiziApplication extends Application {
         vertices = new float[]{
                 0f, 0f, //position
                 0f, 0f, //velocity
-                0f, -9.81f, //force
+                0f, -2.81f, //acceleration
 
 
         };
+
+//        glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
+//            double[] x = new double[1], y = new double[1];
+//            glfwGetCursorPos(window,x,y);
+//            if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS)
+//                engine.addAtPoint((float)x[0]/windowWidth*2-1, -((float)y[0]/windowHeight*2-1));
+//        });
+
+
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_DYNAMIC_DRAW);
         int posAttrib = glGetAttribLocation(program, "pos");
         glVertexAttribPointer(posAttrib, 2, GL_FLOAT, false, Float.BYTES * 6,0);
@@ -68,7 +72,7 @@ public class PhiziApplication extends Application {
         int velocityAttrib = glGetAttribLocation(program, "velocity");
         glVertexAttribPointer(velocityAttrib, 2, GL_FLOAT, false, Float.BYTES * 6, Float.BYTES * 2);
         glEnableVertexAttribArray(velocityAttrib);
-        int forceAttrib = glGetAttribLocation(program, "force");
+        int forceAttrib = glGetAttribLocation(program, "accel");
         glVertexAttribPointer(forceAttrib, 2, GL_FLOAT, false, Float.BYTES * 6, Float.BYTES * 4);
         glEnableVertexAttribArray(forceAttrib);
 
